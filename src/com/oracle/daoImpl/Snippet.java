@@ -1,4 +1,4 @@
-package com.bjsxt.daoImpl;
+package com.oracle.daoImpl;
 
 import com.oracle.pojo.Student;
 

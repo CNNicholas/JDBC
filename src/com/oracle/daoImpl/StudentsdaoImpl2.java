@@ -1,23 +1,24 @@
-package com.bjsxt.daoImpl;
+package com.oracle.daoImpl;
 /**
- * 使用Statement
- * 有SQL注入风险
+ * 使用prepareStatement
+ * 有效防止SQL注入
+ * 提高运行效率（采用预编译）
  */
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import com.oracle.pojo.Student;
 
-public class StudentsdaoImpl {
+public class StudentsdaoImpl2 {
 
 	private ArrayList<Student> stulist = new ArrayList<>();
 	
 	private Connection conn = null;
-	private Statement stmt = null;
+	private PreparedStatement ps = null;
 	
 	private String driver = "oracle.jdbc.driver.OracleDriver";
 	private String url = "jdbc:oracle:thin:@localhost:1521:orcl";
@@ -28,13 +29,14 @@ public class StudentsdaoImpl {
 		return conn;
 	}
 
-	public StudentsdaoImpl() {
+	public StudentsdaoImpl2() {
 		
 		try {
 			Class.forName(driver);
 			conn = DriverManager.getConnection(url, username, password);
 			conn.setAutoCommit(false);
-			stmt = conn.createStatement();
+			//stmt = conn.createStatement();
+			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -49,7 +51,10 @@ public class StudentsdaoImpl {
 			
 			ResultSet rq;
 			try {
-				rq = stmt.executeQuery("select * from student order by snum");
+				//rq = stmt.executeQuery();
+				String sql = "select * from student order by snum";
+				ps = conn.prepareStatement(sql);
+				rq = ps.executeQuery();
 				while(rq.next()) {
 					Student stu = new Student();
 					
@@ -59,17 +64,13 @@ public class StudentsdaoImpl {
 					stu.setMoney(rq.getDouble("money"));
 					
 					stulist.add(stu);
-					try {
-						rq.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					//rq.close();   !!!!!!!
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			
 		return stulist;
 		
@@ -79,7 +80,14 @@ public class StudentsdaoImpl {
 		
 			int i;
 			try {
-				i = stmt.executeUpdate("insert into student values("+stu.getSnum()+",'"+stu.getSname()+"',"+stu.getSage()+",'"+stu.getMoney()+"')");
+				String sql = "insert into student values(?,'?',?,?)";
+				//i = stmt.executeUpdate("insert into student values("+stu.getSnum()+",'"+stu.getSname()+"',"+stu.getSage()+",'"+stu.getMoney()+"')");
+				ps = prepareStatement(sql);
+				ps.setInt(1, stu.getSnum());
+				ps.setString(2, stu.getSname());
+				ps.setInt(3, stu.getSage());
+				ps.setDouble(4, stu.getMoney());
+				i = ps.executeUpdate();
 				return i;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -93,12 +101,23 @@ public class StudentsdaoImpl {
 				return -1;
 			}
 	}
+	private PreparedStatement prepareStatement(String sql) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	//数据更新
 	public int StudentsUpdate(int snum,String word,String newword){  
 		
 		int i;
 		try {
-			i = stmt.executeUpdate("update student set "+word+"='"+newword+"' where snum= "+snum);
+			String sql = "update student set ?=? where snum= ?";
+			//i = stmt.executeUpdate("update student set "+word+"='"+newword+"' where snum= "+snum);
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, word);
+			ps.setString(2, newword);
+			ps.setInt(3, snum);
+			i = ps.executeUpdate();
 			return i;
 		} catch (SQLException e) {	//("update student set sname='"+newName+"' where snum="+snum)
 			// TODO Auto-generated catch block
@@ -120,8 +139,11 @@ public class StudentsdaoImpl {
 		
 		int i;
 		try {
-			
-			 i = stmt.executeUpdate("delete from student where snum= "+snum);
+			 String sql = "delete from student where snum= ?";
+			 //i = stmt.executeUpdate("delete from student where snum= "+snum);
+			 ps = conn.prepareStatement(sql);
+			 ps.setInt(1, snum);
+			 i = ps.executeUpdate();
 			 return i;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -146,11 +168,13 @@ public class StudentsdaoImpl {
 			e.printStackTrace();
 		}
 		try {
-			stmt.close();
+			ps.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
+	
 }
 
