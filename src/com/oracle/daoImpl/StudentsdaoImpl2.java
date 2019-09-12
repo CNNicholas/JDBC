@@ -81,14 +81,15 @@ public class StudentsdaoImpl2 {
 		
 			int i;
 			try {
-				String sql = "insert into student values('?','?','?','?')";
+				String sql = "insert into student values(?,?,?,?)";
 				//i = stmt.executeUpdate("insert into student values("+stu.getSnum()+",'"+stu.getSname()+"',"+stu.getSage()+",'"+stu.getMoney()+"')");
-				ps = prepareStatement(sql);
+				ps = conn.prepareStatement(sql);
 				
 				ps.setInt(1, stu.getSnum());
 				ps.setString(2, stu.getSname());
 				ps.setInt(3, stu.getSage());
 				ps.setDouble(4, stu.getMoney());
+				
 				i = ps.executeUpdate();
 				return i;
 			} catch (SQLException e) {
@@ -103,22 +104,19 @@ public class StudentsdaoImpl2 {
 				return -1;
 			}
 	}
-	private PreparedStatement prepareStatement(String sql) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	//数据更新
-	public int StudentsUpdate(int snum,String word,String newword){  
+	public int StudentsUpdate(int snum,String newword){    //更改sname	不能用？改变字段
 		
 		int i;
 		try {
-			String sql = "update student set ?='?' where snum='?'";
+			String sql = "update student set sname = ? where snum= ?";
 			//i = stmt.executeUpdate("update student set "+word+"='"+newword+"' where snum= "+snum);
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, word);
-			ps.setString(2, newword);
-			ps.setInt(3, snum);
+			//ps.setString(1, word);
+			ps.setString(1, newword);
+			ps.setInt(2, snum);
 			
 			i = ps.executeUpdate();
 			return i;
