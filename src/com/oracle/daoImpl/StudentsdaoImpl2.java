@@ -19,6 +19,7 @@ public class StudentsdaoImpl2 {
 	
 	private Connection conn = null;
 	private PreparedStatement ps = null;
+	private ResultSet rq = null;
 	
 	private String driver = "oracle.jdbc.driver.OracleDriver";
 	private String url = "jdbc:oracle:thin:@localhost:1521:orcl";
@@ -46,10 +47,10 @@ public class StudentsdaoImpl2 {
 		}
 		
 	}
-	//数据查询
+		//数据查询
 	public ArrayList<Student> Select(){
 			
-			ResultSet rq;
+			
 			try {
 				//rq = stmt.executeQuery();
 				String sql = "select * from student order by snum";
@@ -64,7 +65,7 @@ public class StudentsdaoImpl2 {
 					stu.setMoney(rq.getDouble("money"));
 					
 					stulist.add(stu);
-					//rq.close();   !!!!!!!
+					//rq.close(); 
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -80,9 +81,10 @@ public class StudentsdaoImpl2 {
 		
 			int i;
 			try {
-				String sql = "insert into student values(?,'?',?,?)";
+				String sql = "insert into student values('?','?','?','?')";
 				//i = stmt.executeUpdate("insert into student values("+stu.getSnum()+",'"+stu.getSname()+"',"+stu.getSage()+",'"+stu.getMoney()+"')");
 				ps = prepareStatement(sql);
+				
 				ps.setInt(1, stu.getSnum());
 				ps.setString(2, stu.getSname());
 				ps.setInt(3, stu.getSage());
@@ -111,12 +113,13 @@ public class StudentsdaoImpl2 {
 		
 		int i;
 		try {
-			String sql = "update student set ?=? where snum= ?";
+			String sql = "update student set ?='?' where snum='?'";
 			//i = stmt.executeUpdate("update student set "+word+"='"+newword+"' where snum= "+snum);
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, word);
 			ps.setString(2, newword);
 			ps.setInt(3, snum);
+			
 			i = ps.executeUpdate();
 			return i;
 		} catch (SQLException e) {	//("update student set sname='"+newName+"' where snum="+snum)
@@ -169,6 +172,12 @@ public class StudentsdaoImpl2 {
 		}
 		try {
 			ps.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			rq.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
