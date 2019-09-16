@@ -4,14 +4,14 @@ import com.oracle.pojo.Student;
 
 public class Snippet {
 	public static void main(String[] args) {
-			StudentsdaoImpl2 ss = new StudentsdaoImpl2();
+			StudentsdaoImpl3 ss = new StudentsdaoImpl3();
 
 			Student stu = new Student(222,"zuiuiui",10,250.0);
 			//ss.StudentsInsert(stu);
-			//ss.StudentsUpdate(1,"zhuzhiyu");
-			ss.StudentsDelete(3);
+			//ss.StudentsUpdate(1,"zhij");
+			ss.StudentsDelete(222);
 			System.out.println(ss.Select());
-			ss.close();
+			
 		}
 }
 

@@ -1,0 +1,24 @@
+log4j的日志级别
+	FATAL	致命的错误	一般在方法内部使用
+	ERROR	异常错误	一般在调用方法使用	
+	WARN	警告		一般在警告位置使用
+	INFO	信息（方法级别）	在catch代码块中使用
+	DEBUG	调试（代码级别）	在catch代码块中使用
+具体使用
+	1 导入log4j的jar包
+	2 配置log4j的配置文件
+	3 在使用log4j的类中声明全局的logger对象（反射）
+		public static Logger logger = Logger.getLogger(TestLog.class);
+	4 使用lOGGER对象调用日志方法进行日志输出语句声明
+	
+log4j的配置文件解释
+	注意:  配置文件一定要存放在src下，并命名为log4j.properties
+	设置全局默认配置
+		log4j。rootCategory = INFO,CONSOLE,LOGFILE
+	设置某个包或者某个方法的日志级别
+		log4j。logger。包名 。= FATAL,CONSOLE,LOGFILE 
+		log4j。logger。包名 。类名= FATAL,CONSOLE,LOGFILE 
+		log4j。logger。包名 。类名。方法名= DEBUG,CONSOLE,LOGFILE 
+	设置控制台输出配置
+	常用输出格式
+		%p-%d{yyyy/MM/dd hh:mm:ss}-%l-%m%n
